@@ -30,6 +30,7 @@ def configure_training(args):
     params['warmup_steps']  = args.warmup_steps
     params['n_epochs']      = args.n_epochs
     params['valid_steps']   = args.valid_steps
+    params['data_path']   = args.data_path
     return devices, params
 
 def train_model(args):
@@ -84,7 +85,9 @@ def test_model(args):
     models = os.listdir(args.save_path)
     
     # load dataset
-    data_paths = get_data_path(args.mode, args.encoder)
+    # data_paths = get_data_path(args.mode, args.encoder)
+    data_paths = {'test': args.data_path}
+    
     datasets = MatchSumPipe(args.candidate_num, args.encoder).process_from_file(data_paths)
     print('Information of dataset is:')
     print(datasets)
@@ -119,6 +122,9 @@ if __name__ == '__main__':
 
     parser.add_argument('--save_path', required=True,
                         help='root of the model', type=str)
+    parser.add_argument('--data_path', required=True,
+                        help='path of the data (for testing)', type=str)
+                    
     # example for gpus input: '0,1,2,3'
     parser.add_argument('--gpus', required=True,
                         help='available gpus for training(separated by commas)', type=str)
