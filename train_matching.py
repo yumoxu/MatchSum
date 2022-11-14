@@ -119,19 +119,23 @@ def test_model(args):
 def rouge(args):
     models = os.listdir(args.save_path)
     for cur_model in models:
-        jsonl_name = args.data_path.split('/')[-1].split('.')[0]
-        print(f'jsonl_name: {jsonl_name}')
-        
-        result_path = join(args.save_path, '../result')
-        if not exists(result_path):
-            raise FileNotFoundError
+        if args.eval_path:
+            eval_path = args.eval_path
+        else:
+            jsonl_name = args.data_path.split('/')[-1].split('.')[0]
+            print(f'jsonl_name: {jsonl_name}')
+            
+            result_path = join(args.save_path, '../result')
+            if not exists(result_path):
+                raise FileNotFoundError
 
-        model_path = join(result_path, cur_model, jsonl_name)
-    
-        if not exists(model_path):
-            raise FileNotFoundError
-        dec_path = join(model_path, 'dec')
-        ref_path = join(model_path, 'ref')
+            eval_path = join(result_path, cur_model, jsonl_name)
+        
+            if not exists(eval_path):
+                raise FileNotFoundError
+        
+        dec_path = join(eval_path, 'dec')
+        ref_path = join(eval_path, 'ref')
         print(f'dec_path: {dec_path}')
         print(f'ref_path: {ref_path}')
         MatchRougeMetric.eval_rouge(dec_path, ref_path, Print=True)
@@ -148,6 +152,9 @@ if __name__ == '__main__':
                         help='root of the model', type=str)
     parser.add_argument('--data_path', required=True,
                         help='path of the data (for testing)', type=str)
+    
+    parser.add_argument('--eval_path', required=False,
+                        help='path of the data (for ROUGE eval)', type=str)
                     
     # example for gpus input: '0,1,2,3'
     parser.add_argument('--gpus', required=True,
