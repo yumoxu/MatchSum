@@ -121,8 +121,19 @@ def rouge(args):
     for cur_model in models:
         jsonl_name = args.data_path.split('/')[-1].split('.')[0]
         print(f'jsonl_name: {jsonl_name}')
+        
+        result_path = join(args.save_path, '../result')
+        if not exists(result_path):
+            raise FileNotFoundError
 
-        dec_path, ref_path = get_result_path(args.save_path, cur_model, jsonl_name)
+        model_path = join(result_path, cur_model, jsonl_name)
+    
+        if not exists(model_path):
+            raise FileNotFoundError
+        dec_path = join(model_path, 'dec')
+        ref_path = join(model_path, 'ref')
+        print(f'dec_path: {dec_path}')
+        print(f'ref_path: {ref_path}')
         MatchRougeMetric.eval_rouge(dec_path, ref_path, Print=True)
 
 
