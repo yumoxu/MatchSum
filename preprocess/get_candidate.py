@@ -66,7 +66,7 @@ def get_rouge(path, dec):
     return (rouge1 + rouge2 + rougel) / 3
 
 @curry
-def get_candidates(tokenizer, cls, sep_id, idx):
+def get_candidates(tokenizer, cls, sep_id, idx, dataset):
 
     idx_path = join(temp_path, str(idx))
     
@@ -90,10 +90,23 @@ def get_candidates(tokenizer, cls, sep_id, idx):
     # here is for CNN/DM: truncate each document into the 5 most important sentences (using BertExt), 
     # then select any 2 or 3 sentences to form a candidate summary, so there are C(5,2)+C(5,3)=20 candidate summaries.
     # if you want to process other datasets, you may need to adjust these numbers according to specific situation.
+    if dataset == 'cnndm':
+        combs = [2, 3]
+    elif dataset in ('xsum', 'reddit'):
+        combs = [1, 2]
+    elif dataset == 'wikihow':
+        combs = [3, 4, 5]
+
     sent_id = sent_ids[idx]['sent_id'][:5]
-    indices = list(combinations(sent_id, 2))
-    indices += list(combinations(sent_id, 3))
-    if len(sent_id) < 2:
+    # indices = list(combinations(sent_id, 2))
+    # indices += list(combinations(sent_id, 3))
+    # if len(sent_id) < 2:
+    #     indices = [sent_id]
+    min_comb = combs[0]
+    indices = list(combinations(sent_id, min_comb))
+    for c in combs[1:]:
+        indices += list(combinations(sent_id, c))
+    if len(sent_id) < min_comb:
         indices = [sent_id]
     
     # get ROUGE score for each candidate summary and sort them in descending order
@@ -180,14 +193,14 @@ def get_candidates_mp(args):
     print('total {} documents'.format(n_files))
     os.makedirs(temp_path)
     processed_path = join(temp_path, 'processed')
-    os.makedirs(processed_path)
+    os.makedirs(processed_path)        
 
     # use multi-processing to get candidate summaries
     start = time()
     print('start getting candidates with multi-processing !!!')
     
     with mp.Pool() as pool:
-        list(pool.imap_unordered(get_candidates(tokenizer, cls, sep_id), range(n_files), chunksize=64))
+        list(pool.imap_unordered(get_candidates(tokenizer, cls, sep_id, args.dataset), range(n_files), chunksize=64))
     
     print('finished in {}'.format(timedelta(seconds=time()-start)))
     
@@ -214,6 +227,8 @@ if __name__ == '__main__':
         help='indices of the remaining sentences of the truncated document')
     parser.add_argument('--write_path', type=str, required=True,
         help='path to store the processed dataset')
+
+    parser.add_argument('--dataset', type=str, required=True)
 
     args = parser.parse_args()
     assert args.tokenizer in ['bert', 'roberta']
