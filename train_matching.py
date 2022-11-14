@@ -106,7 +106,9 @@ def test_model(args):
         model = torch.load(join(args.save_path, cur_model))
     
         # configure testing
-        dec_path, ref_path = get_result_path(args.save_path, cur_model)
+        jsonl_name = args.data_path.split('/')[-1].split('.')[0]
+        print(f'jsonl_name: {jsonl_name}')
+        dec_path, ref_path = get_result_path(args.save_path, cur_model, jsonl_name)
         test_metric = MatchRougeMetric(data=read_jsonl(data_paths['test']), dec_path=dec_path, 
                                   ref_path=ref_path, n_total = len(test_set))
         tester = Tester(data=test_set, model=model, metrics=[test_metric], 

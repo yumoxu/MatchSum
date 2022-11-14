@@ -18,11 +18,12 @@ def get_data_path(mode, encoder):
         paths['test']  = 'data/test_CNNDM_' + encoder + '.jsonl'
     return paths
 
-def get_result_path(save_path, cur_model):
+def get_result_path(save_path, cur_model, jsonl_name):
     result_path = join(save_path, '../result')
     if not exists(result_path):
         os.makedirs(result_path)
-    model_path = join(result_path, cur_model)
+    model_path = join(result_path, cur_model, jsonl_name)
+    
     if not exists(model_path):
         os.makedirs(model_path)
     dec_path = join(model_path, 'dec')
