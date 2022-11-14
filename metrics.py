@@ -17,8 +17,8 @@ from rouge import Rouge
 from fastNLP.core.losses import LossBase
 from fastNLP.core.metrics import MetricBase
 
-# _ROUGE_PATH = '/home/s1617290/ROUGE-1.5.5'
-_ROUGE_PATH = '/home/s1617290/evaluation/ROUGE-RELEASE-1.5.5'
+_ROUGE_PATH = '/home/s1617290/ROUGE-1.5.5'
+# _ROUGE_PATH = '/home/s1617290/evaluation/ROUGE-RELEASE-1.5.5'
 
 class MarginRankingLoss(LossBase):      
     
@@ -179,7 +179,7 @@ class MatchRougeMetric(MetricBase):
     def eval_rouge(dec_dir, ref_dir, Print=True):
         assert _ROUGE_PATH is not None
         print(f'Start evaluating ROUGE score. ROUGE_PATH: {_ROUGE_PATH}')
-        
+
         log.get_global_console_logger().setLevel(logging.WARNING)
         dec_pattern = '(\d+).dec'
         ref_pattern = '#ID#.ref'
