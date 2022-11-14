@@ -66,7 +66,7 @@ def get_rouge(path, dec):
     return (rouge1 + rouge2 + rougel) / 3
 
 @curry
-def get_candidates(tokenizer, cls, sep_id, idx, dataset):
+def get_candidates(tokenizer, cls, sep_id, dataset, idx):
 
     idx_path = join(temp_path, str(idx))
     
