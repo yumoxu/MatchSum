@@ -115,6 +115,17 @@ def test_model(args):
                         batch_size=args.batch_size, device=device, use_tqdm=False)
         tester.test()
 
+
+def rouge(args):
+    models = os.listdir(args.save_path)
+    for cur_model in models:
+        jsonl_name = args.data_path.split('/')[-1].split('.')[0]
+        print(f'jsonl_name: {jsonl_name}')
+
+        dec_path, ref_path = get_result_path(args.save_path, cur_model, jsonl_name)
+        MatchRougeMetric.eval_rouge(dec_path, ref_path, Print=True)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='training/testing of MatchSum'
@@ -155,7 +166,8 @@ if __name__ == '__main__':
     if args.mode == 'train':
         print('Training process of MatchSum !!!')
         train_model(args)
-    else:
+    elif args.mode == 'test':
         print('Testing process of MatchSum !!!')
         test_model(args)
-
+    elif args.mode == 'rouge':
+        rouge(args)

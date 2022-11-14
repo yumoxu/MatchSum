@@ -165,7 +165,6 @@ class MatchRougeMetric(MetricBase):
                 for sent in ref:
                     print(sent, file=f)
         
-        print('Start evaluating ROUGE score !!!')
         R_1, R_2, R_L = MatchRougeMetric.eval_rouge(self.dec_path, self.ref_path)
         eval_result = {'ROUGE-1': R_1, 'ROUGE-2': R_2, 'ROUGE-L':R_L}
 
@@ -179,6 +178,8 @@ class MatchRougeMetric(MetricBase):
     @staticmethod
     def eval_rouge(dec_dir, ref_dir, Print=True):
         assert _ROUGE_PATH is not None
+        print(f'Start evaluating ROUGE score. ROUGE_PATH: {_ROUGE_PATH}')
+        
         log.get_global_console_logger().setLevel(logging.WARNING)
         dec_pattern = '(\d+).dec'
         ref_pattern = '#ID#.ref'
