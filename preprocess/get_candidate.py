@@ -96,6 +96,8 @@ def get_candidates(tokenizer, cls, sep_id, idx, dataset):
         combs = [1, 2]
     elif dataset == 'wikihow':
         combs = [3, 4, 5]
+    else:
+        raise NotImplementedError(dataset)
 
     sent_id = sent_ids[idx]['sent_id'][:5]
     # indices = list(combinations(sent_id, 2))
